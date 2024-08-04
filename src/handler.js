@@ -13,6 +13,27 @@ export const addBookHandler = (request, h) => {
     reading,
   } = request.payload;
 
+  if (!name) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. Mohon isi nama buku',
+    });
+
+    response.code(400);
+    return response;
+  }
+
+  if (readPage > pageCount) {
+    const response = h.response({
+      status: 'fail',
+      message:
+        'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
+    });
+
+    response.code(400);
+    return response;
+  }
+
   const id = nanoid(16);
   const finished = pageCount === readPage;
   const insertedAt = new Date().toISOString();
@@ -34,27 +55,6 @@ export const addBookHandler = (request, h) => {
   };
 
   books.push(newBook);
-
-  if (!name) {
-    const response = h.response({
-      status: 'fail',
-      message: 'Gagal menambahkan buku. Mohon isi nama buku',
-    });
-
-    response.code(400);
-    return response;
-  }
-
-  if (readPage > pageCount) {
-    const response = h.response({
-      status: 'fail',
-      message:
-        'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
-    });
-
-    response.code(400);
-    return response;
-  }
 
   const isSuccess = books.filter((book) => book.id === id).length > 0;
 
@@ -80,14 +80,16 @@ export const addBookHandler = (request, h) => {
   return response;
 };
 
-export const getAllBooksHandler = () => {
-  return {
-    status: 'success',
-    data: {
-      books,
-    },
-  };
-};
+export const getAllBooksHandler = () => ({
+  status: 'success',
+  data: {
+    books: books.map((book) => ({
+      id: book.id,
+      name: book.name,
+      publisher: book.publisher,
+    })),
+  },
+});
 
 export const getBookByIdHandler = (request, h) => {
   const { id } = request.params;

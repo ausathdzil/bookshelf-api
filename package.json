@@ -4,8 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node ./src/server.js",
-    "lint": "eslint ./"
+    "start": "node ./src/server.js"
   },
   "author": "",
   "license": "ISC",
